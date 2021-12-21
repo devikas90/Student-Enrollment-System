@@ -30,14 +30,14 @@
             
             
             
-            <!--/stories-->
+            
             <div>
                 <form method="post" (ngSubmit)="addCourse()">
               
                   <div class="row">
                     <div class="col-md-12">
                       <div class="form-group">
-                        <label for="first" style="color: white;">Name of Course</label>
+                        <label for="first" style="color: white;">Course Name</label>
                         <input type="text" [(ngModel)]="course.name" class="form-control" placeholder="Name of course" id="cname" name="name" required>
                       </div>
                     </div>
@@ -50,12 +50,12 @@
                     <div class="col-md-12">
               
                       <div class="form-group">
-                        <label for="text" style="color: white;">Details of Course</label>
+                        <label for="text" style="color: white;">Course Details</label>
                         <input type="text" [(ngModel)]="course.details" class="form-control" id="details" required placeholder="Enter details of Course" name="details">
                       </div>
 
                       <div class="form-group">
-                        <label for="text" style="color: white;">Price of Course</label>
+                        <label for="text" style="color: white;">Course Fee</label>
                         <input type="text" [(ngModel)]="course.price" class="form-control" id="details" required placeholder="Enter price of Course" name="price">
                       </div>
 
@@ -72,12 +72,15 @@
               
                  
                   <div style="padding-top: 5px;">
-                    <button type="submit" class="btn btn-primary">Add Course</button>
+                    <!-- <button type="submit" class="btn btn-primary">Add Course</button> -->
+                    <div class="col-md-4"><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-warning" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUBMIT <span class="glyphicon glyphicon-send"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                      </div>
                     <button type="reset" class="btn btn-secondary">Reset</button>
                   </div>
                 </form>
               </div>
-            <!--/stories-->
+            
             
             
           
@@ -87,7 +90,7 @@
                                                                                          
                                                       
                                                         
-         </div><!--/col-12-->
+         </div>
     </div>
   </div>
                                                   
@@ -95,4 +98,10 @@
 
   
   
-  
+   
+
+
+
+
+
+   
