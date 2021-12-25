@@ -8,9 +8,12 @@ const schema = mongoose.Schema;
 
 const courseSchema= new schema({
     name: String,
+    certification: String,
     details: String,
     price:String,
-    eligibility:String
+    eligibility:String,
+    count:Number,
+    code:String
 
 });
 

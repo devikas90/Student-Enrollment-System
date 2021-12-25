@@ -32,7 +32,7 @@
             
             
             <div>
-                <form method="post" (ngSubmit)="addCourse()">
+                <form method="post" (ngSubmit)="addCourse()" #addForm='ngForm'>
               
                   <div class="row">
                     <div class="col-md-12">
@@ -42,7 +42,14 @@
                       </div>
                     </div>
                   </div>
-              
+                  <div class="form-group">
+                    <label for="text" style="color: white;">Certified as</label>
+                    <input type="text" [(ngModel)]="course.certification" class="form-control" id="certification" required placeholder="Enter the name of certification" name="details">
+                  </div>
+                  <div class="form-group">
+                    <label for="text" style="color: white;">Course Code</label>
+                    <input type="text" [(ngModel)]="course.code" class="form-control" id="code" required placeholder="Enter the course code in capital letters" name="details">
+                  </div>
               
                   <div class="row">
               
@@ -55,8 +62,11 @@
                       </div>
 
                       <div class="form-group">
-                        <label for="text" style="color: white;">Course Fee</label>
-                        <input type="text" [(ngModel)]="course.price" class="form-control" id="details" required placeholder="Enter price of Course" name="price">
+
+                        
+                        <label for="text" style="color: white;">Price of Course</label>
+                        <input type="number" [(ngModel)]="course.price" class="form-control" id="details" required placeholder="Enter price of Course" name="price">
+
                       </div>
 
                       <div class="form-group">
@@ -72,10 +82,14 @@
               
                  
                   <div style="padding-top: 5px;">
+<<<<<<< HEAD
                     <!-- <button type="submit" class="btn btn-primary">Add Course</button> -->
                     <div class="col-md-4"><br>
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="submit" class="btn btn-warning" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUBMIT <span class="glyphicon glyphicon-send"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
                       </div>
+=======
+                    <button type="submit" [disabled]='addForm.form.invalid' class="btn btn-primary">Add Course</button>
+>>>>>>> 
                     <button type="reset" class="btn btn-secondary">Reset</button>
                   </div>
                 </form>
