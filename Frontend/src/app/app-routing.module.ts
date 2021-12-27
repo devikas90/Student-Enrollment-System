@@ -9,6 +9,8 @@ import { StudentsComponent } from './students/students.component';
 import { LoginComponent } from './login/login.component';
 import { StudentloginComponent } from './studentlogin/studentlogin.component';
 import { EmpregisterComponent } from './empregister/empregister.component';
+import { EmployeeapprovalComponent } from './employeeapproval/employeeapproval.component';
+import { EmployeesComponent } from './employees/employees.component';
 
 const routes: Routes = [
   {
@@ -53,6 +55,14 @@ const routes: Routes = [
         component:EmpregisterComponent
       }
     ]
+  },
+  {
+    path:'employee-approval',
+    component:EmployeeapprovalComponent
+  },
+  {
+    path:'employees',
+    component:EmployeesComponent
   }
   
 ];
