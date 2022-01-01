@@ -421,4 +421,35 @@ app.get('/search-student',(req,res)=>{
 
 })
 
+// delete student
+app.delete('/remove-student/:id',(req,res)=>{  
+    id = req.params.id;
+    studentData.findByIdAndDelete({"_id":id})
+    .then(()=>{
+        console.log('success')
+        res.send();
+    })
+});
+
+// delete employee
+app.delete('/remove-employee/:id',(req,res)=>{  
+    id = req.params.id;
+    employeeData.findByIdAndDelete({"_id":id})
+    .then(()=>{
+        console.log('success')
+        res.send();
+    })
+});
+
+// get single student using _id
+app.get('/student/:id',function(req,res){  
+    res.header("Acces-Control-Allow-Origin","*");
+    res.header("Acces-Control-Allow-Methods: GET, POST, PATH, PUT, DELETE, HEAD"); 
+    let id=req.params.id;
+    studentData.findOne({_id:id},function(err,student){ 
+        res.send(student)
+    })
+});
+
+
 app.listen(port,()=>{console.log("server Ready at"+port)});

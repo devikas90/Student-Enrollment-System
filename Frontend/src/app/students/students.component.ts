@@ -28,7 +28,20 @@ export class StudentsComponent implements OnInit {
 
   showStudent(student:any){
     localStorage.setItem('showstudent',student._id)
-    this.router.navigate([''])
+    this.router.navigate(['student'])
+  }
+
+  editStudent(student:any){
+    localStorage.setItem('editstudent',student._id)
+    
+  }
+
+  deleteStudent(student:any){
+      console.log(student);
+      this.studentService.removeStudent(student._id)
+      .subscribe((data) => {
+        this.ngOnInit()
+      })
     
   }
 
