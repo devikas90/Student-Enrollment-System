@@ -23,9 +23,9 @@ const studentSchema= new schema({
     payment:String,
     id:String,
     image:String,
-    courseName:String
-
-
+    courseName:String,
+    mark:String
+    
 });
 
 // model

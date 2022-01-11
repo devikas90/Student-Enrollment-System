@@ -27,4 +27,12 @@ export class StudentService {
   removeStudent(id:any){
     return this.http.delete("http://localhost:5000/remove-student/"+id)
   }
+
+  updateStudent(student:any){
+    return this.http.put('http://localhost:5000/update-student',{"student":student})
+  }
+
+  exitMark(student:any){
+    return this.http.put('http://localhost:5000/exit-mark',{"student":student})
+  }
 }

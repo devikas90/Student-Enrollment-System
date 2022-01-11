@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CourseService } from '../course.service';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-courses',
@@ -20,7 +21,7 @@ export class CoursesComponent implements OnInit {
 
   courses=(this.name,this.certified,this.code,this.details,this.price,this.eligibility,this.image)
 
-  constructor(private courseService:CourseService,private router:Router,public http:HttpClient) { }
+  constructor(private courseService:CourseService,private router:Router,public http:HttpClient,public auth:AuthService) { }
 
   ngOnInit(): void {
     this.courseService.getCourses()
@@ -36,12 +37,17 @@ export class CoursesComponent implements OnInit {
   }
 
   deleteCourse(course:any){
-    console.log(course);
-    this.courseService.removeCourse(course._id)
-    .subscribe((data) => {
+    if(confirm("Are you sure you want to delete this course???")) {
+      
+      this.courseService.removeCourse(course._id)
+      .subscribe((data) => {
+        this.ngOnInit()
+      })
+    }else{
       this.ngOnInit()
-    })
+    }
   }
+
   editCourse(course:any){
     localStorage.setItem('editcourse',course._id)
     this.router.navigate(['update-course'])

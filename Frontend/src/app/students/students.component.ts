@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
 import { studentModel } from '../registerform/student.model';
 import { StudentService } from '../student.service';
 
@@ -11,12 +12,14 @@ import { StudentService } from '../student.service';
 })
 export class StudentsComponent implements OnInit {
 
-  constructor(private studentService:StudentService,private router:Router,public http:HttpClient) { }
+  constructor(private studentService:StudentService,private router:Router,public http:HttpClient,public auth:AuthService) { }
   name:any=''
   id:any=''
   email:any=''
   image:any=''
   students=(this.name,this.id,this.email,this.image)
+  query:string | undefined
+  public searchFilter: any = '';
   ngOnInit(): void {
     this.studentService.getStudents()
     .subscribe((data)=>{
@@ -31,17 +34,26 @@ export class StudentsComponent implements OnInit {
     this.router.navigate(['student'])
   }
 
+  enterMark(student:any){
+    localStorage.setItem('enterMark',student._id)
+    this.router.navigate(['mark-entry'])
+  }
+
   editStudent(student:any){
     localStorage.setItem('editstudent',student._id)
-    
+    this.router.navigate(['update-student'])
   }
 
   deleteStudent(student:any){
       console.log(student);
-      this.studentService.removeStudent(student._id)
-      .subscribe((data) => {
+      if(confirm("Are you sure to delete this student??")) {
+        this.studentService.removeStudent(student._id)
+        .subscribe((data) => {
+          this.ngOnInit()
+        })
+      }else{
         this.ngOnInit()
-      })
+      }
     
   }
 

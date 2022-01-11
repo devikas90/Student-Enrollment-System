@@ -10,28 +10,45 @@ export class AuthService {
   
   studentLogin(data:any){
     return this.http.post("http://localhost:5000/studentLogin",{"student":data})
-    .subscribe((data)=>{
-      console.log(data);
-      
-    })
   }
 
   adminLogin(data:any){
     console.log(data);
-    
     return this.http.post("http://localhost:5000/adminLogin",{"admin":data})
-    .subscribe((data)=>{
-      console.log(data);
-      
-    })
   }
 
   employeeLogin(data:any){
     return this.http.post("http://localhost:5000/employeeLogin",{"employee":data})
-    .subscribe((data)=>{
-      console.log(data);
-      
-    })
+  }
+
+  adminLoggedIn()
+  {
+    return !!localStorage.getItem('admintoken')
+  }
+
+  studentLoggedIn()
+  {
+    return !!localStorage.getItem('studenttoken')
+  }
+
+  employeeLoggedIn()
+  {
+    return !!localStorage.getItem('employeetoken')
+  }
+
+  getStudentToken()
+  {
+    return localStorage.getItem('studenttoken')
+  }
+
+  getAdminToken()
+  {
+    return localStorage.getItem('admintoken')
+  }
+
+  getEmployeeToken()
+  {
+    return localStorage.getItem('employeetoken')
   }
 
 }

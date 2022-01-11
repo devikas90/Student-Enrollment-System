@@ -1,15 +1,15 @@
 <!-- HOME -->
-<section id="home" class="slider" data-stellar-background-ratio="0.5">
+<section *ngIf="!auth.employeeLoggedIn()&&!auth.adminLoggedIn()&&!auth.studentLoggedIn()"  id="home" class="slider" data-stellar-background-ratio="0.5">
     <div class="row">
 
               <div class="owl-theme">
-                   <div class="item item-first">
+                   <div class="item1 item-first">
                         <div class="caption">
                              <div class="container">
                                   <div class="col-md-8 col-sm-12">
                                        <h3>Explore the world of technology</h3>
                                        <h1>Industry focused ICT skills development programmes for students</h1>
-                                       <a href="#team" class="section-btn btn btn-default smoothScroll">Go through our courses</a>
+                                       <a routerLink='/courses' class="section-btn btn smoothScroll">Go through our courses</a>
                                   </div>
                              </div>
                         </div>
@@ -19,9 +19,68 @@
     </div>
 </section>
 
+<section *ngIf="auth.adminLoggedIn()" id="home" class="slider" data-stellar-background-ratio="0.5">
+     <div class="row">
+ 
+               <div class="owl-theme">
+                    <div class="item1 item-first">
+                         <div class="caption">
+                              <div class="container">
+                                   <div class="col-md-8 col-sm-12">
+                                        <h1>WELCOME ADMIN</h1>
+                                        <!-- <h1>Industry focused ICT skills development programmes for students</h1>
+                                        <a routerLink='/courses' class="section-btn btn smoothScroll">Go through our courses</a> -->
+                                   </div>
+                              </div>
+                         </div>
+                    </div>
+               </div>
+ 
+     </div>
+ </section>
+
+ <section *ngIf="auth.employeeLoggedIn()" id="home" class="slider" data-stellar-background-ratio="0.5">
+     <div class="row">
+ 
+               <div class="owl-theme">
+                    <div class="item1 item-first">
+                         <div class="caption">
+                              <div class="container">
+                                   <div class="col-md-8 col-sm-12">
+                                        <h1>WELCOME EMPLOYEE</h1>
+                                        <!-- <h1>Industry focused ICT skills development programmes for students</h1>
+                                        <a routerLink='/courses' class="section-btn btn smoothScroll">Go through our courses</a> -->
+                                   </div>
+                              </div>
+                         </div>
+                    </div>
+               </div>
+ 
+     </div>
+ </section>
+
+ <section *ngIf="auth.studentLoggedIn()" id="home" class="slider" data-stellar-background-ratio="0.5">
+     <div class="row">
+ 
+               <div class="owl-theme">
+                    <div class="item1 item-first">
+                         <div class="caption">
+                              <div class="container">
+                                   <div class="col-md-8 col-sm-12">
+                                        <h1>WELCOME {{student.name}}</h1>
+                                         <!-- <h1>Industry focused ICT skills development programmes for students</h1> -->
+                                        <a (click)="showProfile(student)" class="section-btn btn smoothScroll">VIEW PROFILE</a>
+                                   </div>
+                              </div>
+                         </div>
+                    </div>
+               </div>
+ 
+     </div>
+ </section>
 
 <!-- ABOUT -->
-<section id="about" data-stellar-background-ratio="0.5">
+<section id="about" class="homepage" data-stellar-background-ratio="0.5">
     <div class="container">
          <div class="row">
 
@@ -36,14 +95,17 @@
                             <p>ICT Academy of Kerala is a Social Enterprise created in a Public Private Partnership model (PPP) for imparting ICT skills to the youths of Kerala and improve their employability opportunities in the Industry. The Company is supported by Govt. of India , partnered by Govt. of Kerala and the IT industry.</p>
                              <p>ICTAK do research and offers training programs on diverse streams,ranging from emerging technologies to life skills.
 
-                                Being a Social Enterprise, we strive to enhance the technology skills of the youth thereby embibing industry relavent skills to this</p>
-                        </div>
+                                  Being a Social Enterprise, we strive to enhance the technology skills of the youth thereby embibing industry relavent skills to this
+                             </p>
+                              
+                             
+                         </div>
                    </div>
               </div>
 
               <div class="col-md-6 col-sm-12" >
                    <div class="wow fadeInUp about-image" data-wow-delay="0.6s">
-                       <img src="../../assets/images/website.jpg" alt="">
+                       <img src="../../assets/images/website1 (2).jpg" alt="">
                    </div>
               </div>
               

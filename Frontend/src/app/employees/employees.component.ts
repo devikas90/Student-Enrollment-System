@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { EmployeeService } from '../employee.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../auth.service';
+
 
 @Component({
   selector: 'app-employees',
@@ -13,7 +15,7 @@ export class EmployeesComponent implements OnInit {
   role:any=''
   
   employees=(this.name,this.email,this.role)
-  constructor(private employeeService:EmployeeService) { }
+  constructor(private employeeService:EmployeeService,private router:Router,public auth:AuthService) { }
 
   ngOnInit(): void {
     this.employeeService.getEmployees()
@@ -22,15 +24,21 @@ export class EmployeesComponent implements OnInit {
     })
   }
 
-  showEmployee(employee:any){}
-  editEmployee(employee:any){}
+
+  editEmployee(employee:any){
+    localStorage.setItem('editEmployee',employee._id)
+    this.router.navigate(['update-employee'])
+  }
+
   deleteEmployee(employee:any){
-    console.log(employee);
-    this.employeeService.removeEmployee(employee._id)
-    .subscribe((data) => {
+    if(confirm("Are you sure to delete this employee??")) {
+      this.employeeService.removeEmployee(employee._id)
+      .subscribe((data) => {
       this.ngOnInit()
     })
-
+    }else{
+      this.ngOnInit()
+    }
   }
 
 

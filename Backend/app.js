@@ -69,8 +69,76 @@ async function sendEmail(data){
     }
 }
 
+async function employeeMail(data){
+    try{
+        const accessToken=await oAuth2Client.getAccessToken()
+          let transporter = nodemailer.createTransport({
+            host: 'smtp.gmail.com',
+            secure: true,
+            auth: {
+                type: 'OAuth2',
+                user: 'creationzv@gmail.com',
+                clientId: CLIENT_ID,
+                clientSecret: CLIENT_SECRET,
+                refreshToken: REFRESH_TOKEN,
+                accessToken:accessToken
+            }
+        });
+
+          const mailOptions={
+              from:'ICT Academy Kerala <creationzv@gmail.com>',
+              to:data,
+              subject:'Employee Registered Successfully',
+              text:'Your request for employee registration has been approved by Admin. You can login with the credentials entered at the time of registration' 
+          }
+
+          const result =  await transporter.sendMail(mailOptions)
+          return result
+
+    }catch(error){
+        return error
+    }
+}
+
+let verify=false;
+
+function verifyEmployeeToken(req, res) {
+    if(!req.headers.employeeauthorization) {
+        return res.status(401).send('Unauthorized request4')
+      }
+      let token = req.headers.employeeauthorization.split(' ')[1]
+      if(token === null) {
+        return res.status(401).send('Unauthorized request5')    
+      }
+      let payload = jwt.verify(token, 'employeeKey')
+      if(!payload) {
+        return res.status(401).send('Unauthorized request6')    
+      }
+      req.userId = payload.subject
+      verify==true
+  }
+
+  function verifyAdminToken(req, res,next) {
+    if(!req.headers.adminauthorization) {
+      return res.status(401).send('Unauthorized request4')
+    }
+    let token = req.headers.adminauthorization.split(' ')[1]
+    if(token === null) {
+      return res.status(401).send('Unauthorized request5')    
+    }
+    let payload = jwt.verify(token, 'adminKey')
+    if(!payload) {
+      return res.status(401).send('Unauthorized request6')    
+    }
+    req.userId = payload.subject
+    verify==true
+
+    next()
+  }
+
+
 // image upload using express file uploads
-    app.post('/uploadImage',(req,res,next) => {
+    app.post('/uploadImage',verifyAdminToken,(req,res,next) => {
         
         let image = req.files.image;
         let id = req.body.id;
@@ -79,7 +147,7 @@ async function sendEmail(data){
         })
     })
 
-    app.post('/studentImage',(req,res,next) => {
+    app.post('/studentImage',verifyAdminToken,(req,res,next) => {
         console.log(req.body)
         let image = req.files.image;
         let id = req.body.id;
@@ -111,7 +179,7 @@ app.get('/course/:id',function(req,res){
 });
 
 // add course
-app.post('/add-course',(req,res)=>{
+app.post('/add-course',verifyAdminToken,(req,res)=>{
     res.header("Acces-Control-Allow-Origin","*");
     res.header("Acces-Control-Allow-Methods: GET, POST, PATH, PUT, DELETE, HEAD"); 
     console.log(req.body);
@@ -133,7 +201,7 @@ app.post('/add-course',(req,res)=>{
    
 });
 
-app.put('/update-course',(req,res)=>{
+app.put('/update-course',verifyAdminToken,(req,res)=>{
     res.header("Acces-Control-Allow-Origin","*");
     res.header("Acces-Control-Allow-Methods: GET, POST, PATH, PUT, DELETE, HEAD"); 
     console.log(req.body)
@@ -154,7 +222,7 @@ app.put('/update-course',(req,res)=>{
                                 })
 
 // delete course
-app.delete('/remove-course/:id',(req,res)=>{  
+app.delete('/remove-course/:id',verifyAdminToken,(req,res)=>{  
     id = req.params.id;
     courseData.findByIdAndDelete({"_id":id})
     .then(()=>{
@@ -193,7 +261,8 @@ app.post('/register-student',async (req,res)=>{
                     course:req.body.student.course,
                     courseName:course.name,
                     payment:"pending",
-                    id:`${course.code}${course.count}`
+                    id:`${course.code}${course.count}`,
+                    mark:""
                 }
             
                 item.password=await bcrypt.hash(item.password,10)
@@ -271,7 +340,7 @@ app.post("/verify-payment",(req,res)=>{
      });
 
 // get all students
-app.get('/students',function(req,res){
+app.get('/students',verifySignin,function(req,res){
     res.header("Acces-Control-Allow-Origin","*");
     res.header("Acces-Control-Allow-Methods: GET, POST, PATH, PUT, DELETE, HEAD");
     studentData.find({payment:'Success'})
@@ -284,7 +353,8 @@ app.post('/studentLogin',(req,res)=>{
     res.header("Acces-Control-Allow-Origin","*");
     res.header("Acces-Control-Allow-Methods: GET, POST, PATH, PUT, DELETE, HEAD");
 
-    studentData.findOne({username:req.body.student.email,payment:'Success'},(err,student)=>{
+    studentData.findOne({email:req.body.student.email,payment:'Success'},(err,student)=>{
+        console.log(student);
         if(student){
             bcrypt.compare(req.body.student.password,student.password)
             .then((response)=>{
@@ -318,7 +388,7 @@ app.post('/adminLogin',async(req,res)=>{
                     console.log("admin");
                     let payload = {subject: req.body.admin.email+req.body.admin.password}
                     let token = jwt.sign(payload, 'adminKey')
-                    res.status(200).send({token,role:'admin'})
+                    res.status(200).send({token,role:'admin',id:admin._id})
                    
                 }else{
                     res.status(401).send('Invalid Admin Password')
@@ -334,7 +404,7 @@ app.post('/adminLogin',async(req,res)=>{
 app.post('/employeeLogin',(req,res)=>{
     res.header("Acces-Control-Allow-Origin","*");
     res.header("Acces-Control-Allow-Methods: GET, POST, PATH, PUT, DELETE, HEAD");
-    employeeData.findOne({username:req.body.employee.email,status:"approved"},(err,employee)=>{
+    employeeData.findOne({email:req.body.employee.email,status:"approved"},(err,employee)=>{
         if(employee){
             bcrypt.compare(req.body.employee.password,employee.password)
             .then((response)=>{
@@ -374,7 +444,7 @@ app.post('/employeeRegister',async(req,res)=>{
     res.send()
 })
 
-app.get('/pending-employee',(req,res)=>{
+app.get('/pending-employee',verifyAdminToken,(req,res)=>{
     res.header("Acces-Control-Allow-Origin","*");
     res.header("Acces-Control-Allow-Methods: GET, POST, PATH, PUT, DELETE, HEAD");
     employeeData.find({status:'pending'}).then((data)=>{
@@ -382,7 +452,7 @@ app.get('/pending-employee',(req,res)=>{
     })
 })
 
-app.post('/approve-employee',(req,res)=>{
+app.post('/approve-employee',verifyAdminToken,(req,res)=>{
     res.header("Acces-Control-Allow-Origin","*");
     res.header("Acces-Control-Allow-Methods: GET, POST, PATH, PUT, DELETE, HEAD");
     employeeData.updateOne(
@@ -392,11 +462,16 @@ app.post('/approve-employee',(req,res)=>{
         {
             $set: { 'status': 'approved'} 
         }).then((data)=>{
-            res.send();
+            employeeData.findOne({_id:req.body.id},function(err,employee){ 
+                employeeMail(employee.email).then((response)=>{
+                    console.log(response);
+                    res.send();
+                })
+            })
         })
 })
 
-app.delete('/reject-employee/:id',(req,res)=>{  
+app.delete('/reject-employee/:id',verifyAdminToken,(req,res)=>{  
     id = req.params.id;
     employeeData.findByIdAndDelete({"_id":id})
     .then(()=>{
@@ -405,14 +480,16 @@ app.delete('/reject-employee/:id',(req,res)=>{
     })
 });
 
-app.get('/employees',(req,res)=>{
+// employee
+app.get('/employees',verifyAdminToken,(req,res)=>{
     employeeData.find({status:"approved"})
     .then((data)=>{
         res.send(data)
     })
 })
 
-app.get('/search-student',(req,res)=>{
+// search student
+app.get('/search-student',verifySignin,(req,res)=>{
     res.header("Acces-Control-Allow-Origin","*");
     res.header("Acces-Control-Allow-Methods: GET, POST, PATH, PUT, DELETE, HEAD");
     studentData.find({payment:'Success'})
@@ -423,7 +500,7 @@ app.get('/search-student',(req,res)=>{
 })
 
 // delete student
-app.delete('/remove-student/:id',(req,res)=>{  
+app.delete('/remove-student/:id',verifyAdminToken,(req,res)=>{  
     id = req.params.id;
     studentData.findByIdAndDelete({"_id":id})
     .then(()=>{
@@ -433,7 +510,7 @@ app.delete('/remove-student/:id',(req,res)=>{
 });
 
 // delete employee
-app.delete('/remove-employee/:id',(req,res)=>{  
+app.delete('/remove-employee/:id',verifyAdminToken,(req,res)=>{  
     id = req.params.id;
     employeeData.findByIdAndDelete({"_id":id})
     .then(()=>{
@@ -443,7 +520,7 @@ app.delete('/remove-employee/:id',(req,res)=>{
 });
 
 // get single student using _id
-app.get('/student/:id',function(req,res){  
+app.get('/student/:id',verifySignin,function(req,res){  
     res.header("Acces-Control-Allow-Origin","*");
     res.header("Acces-Control-Allow-Methods: GET, POST, PATH, PUT, DELETE, HEAD"); 
     let id=req.params.id;
@@ -452,5 +529,90 @@ app.get('/student/:id',function(req,res){
     })
 });
 
+// get single employee using _id
+app.get('/employee/:id',verifyAdminToken,function(req,res){  
+    res.header("Acces-Control-Allow-Origin","*");
+    res.header("Acces-Control-Allow-Methods: GET, POST, PATH, PUT, DELETE, HEAD"); 
+    let id=req.params.id;
+    employeeData.findOne({_id:id},function(err,employee){ 
+        res.send(employee)
+    })
+});
+
+// update employee
+app.put('/update-employee',verifyAdminToken,(req,res)=>{
+    res.header("Acces-Control-Allow-Origin","*");
+    res.header("Acces-Control-Allow-Methods: GET, POST, PATH, PUT, DELETE, HEAD"); 
+    console.log(req.body)
+    let id=req.body.employee._id
+    employeeData.findByIdAndUpdate({"_id":id},
+    {
+        $set:{
+            name:req.body.employee.name,
+            email:req.body.employee.email,
+            role:req.body.employee.role,
+            }
+    }) .then((data)=>{
+    console.log(data); 
+    res.send(data)
+})
+})
+
+// update sstudent
+app.put('/update-student',(req,res)=>{
+    res.header("Acces-Control-Allow-Origin","*");
+    res.header("Acces-Control-Allow-Methods: GET, POST, PATH, PUT, DELETE, HEAD"); 
+    console.log(req.body)
+    let id=req.body.student._id
+    studentData.findByIdAndUpdate({"_id":id},
+    {
+        $set:{
+            name:req.body.student.name,
+            email:req.body.student.email,
+            phone:req.body.student.phone,
+            address:req.body.student.address,
+            district:req.body.student.district,
+            state:req.body.student.state,
+            qualification:req.body.student.qualification,
+            passout:req.body.student.passout,
+            skillset:req.body.student.skillset,
+            employmentStatus:req.body.student.employmentStatus,
+            technologyTraining:req.body.student.technologyTraining,
+            }
+    }) .then((data)=>{
+    console.log(data); 
+    res.send(data)
+})
+})
+
+// enter exit mark
+app.put('/exit-mark',verifySignin,(req,res)=>{
+    res.header("Acces-Control-Allow-Origin","*");
+    res.header("Acces-Control-Allow-Methods: GET, POST, PATH, PUT, DELETE, HEAD"); 
+    console.log(req.body.student.mark)
+    let id=req.body.student._id
+    studentData.findByIdAndUpdate({"_id":id},
+    {
+        $set:{
+            mark:req.body.student.mark,
+            courseName:req.body.student.courseName
+            }
+    }) .then((data)=>{
+    console.log(data); 
+    res.send(data)
+})
+.catch((data)=>{
+    console.log(data);
+})
+})
+
+function verifySignin(req,res,next){
+    if(verify){
+        console.log(verify);
+        return res.status(401).send('Unauthorized request10')
+    }else{
+        next()
+    }
+}
 
 app.listen(port,()=>{console.log("server Ready at"+port)});
